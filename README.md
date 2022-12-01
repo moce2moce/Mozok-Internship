@@ -1,5 +1,4 @@
-# Mozok-Internship
-
+# Mozok Internship Challenge
 
 # Getting Started with Create React App
 
