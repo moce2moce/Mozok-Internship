@@ -8,34 +8,18 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import useFetch from "../hooks/useFetch";
 import { QuoteType } from "../interfaces/interfaces";
 interface Props {}
 
 
 const Quote: React.FC<Props> = (props) => {
-    
-    const [quotes, setQuotes] = useState<QuoteType[]>([])
-    const [newRowArr, setNewRowArr] = useState<any>([])
-    const [myNum, setMyNum] = useState<any[]>([])
+ 
+const {quotes,isLoading} = useFetch()
 
-    useEffect(() => {
-        fetch("https://zenquotes.io/api/quotes")
-        .then(res=> res.json())
-        .then(data=>setQuotes(data))
-    }, [])
-   
-    useEffect(() => {
-            let genderArr = quotes.map((el,idx)=>{
-                let first = el.a.split(" ")[0]                
-                fetch(`https://jsonplaceholder.typicode.com/posts/${idx + 1}`)
-                .then(res=> res.json())
-                .then(data=> myNum.push(data.id))
-              return {...el,id:myNum[idx]}
-            })
-            setNewRowArr(genderArr)
-    }, [quotes])
+          
 
-  return (
+  return isLoading  ? (<p>LOADING...</p> ) : ( 
     <div className="Quote">
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -49,7 +33,7 @@ const Quote: React.FC<Props> = (props) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {newRowArr.map((el:any,idx:any) => (
+            {quotes.map((el:any,idx:any) => (
               <TableRow
                 key={`quotes-${idx}`}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -57,7 +41,8 @@ const Quote: React.FC<Props> = (props) => {
                 <TableCell component="th" scope="row">{el.c}</TableCell>
                 <TableCell align="left">{el.q}</TableCell>
                 <TableCell align="left">{el.a}</TableCell>
-                <TableCell  align="left">{el.id > 20 ? `👩` :`👴`} </TableCell>
+               {/* <TableCell  align="left">{quoteList.length <= 0 ?  'Loading' : el.title == idx + 1 ? "ZHENSKO":"MASHKO" } </TableCell> */}
+               <TableCell align="left">{el.title}</TableCell>
                  
               </TableRow>
            ))} 
@@ -66,7 +51,7 @@ const Quote: React.FC<Props> = (props) => {
       </TableContainer>
       <Button sx={{margin:"40px"}} variant="outlined"><Link to={'/random-quote'} style={{textDecoration:"none"}} >Get a random quote</Link> </Button>
     </div>
-  );
+  )
 };
 
 export default Quote;

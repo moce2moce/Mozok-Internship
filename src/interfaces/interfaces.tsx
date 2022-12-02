@@ -1,8 +1,7 @@
 export interface QuoteType {
-    q:string,
-    a:string,
-    c:string,
-    h:string,
-    id:string,
-
+  q: string;
+  a: string;
+  c: string;
+  h: string;
+  title: string;
 }
