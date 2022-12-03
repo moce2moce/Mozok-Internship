@@ -3,5 +3,5 @@ export interface QuoteType {
   a: string;
   c: string;
   h: string;
-  title: string;
+  gender: string;
 }

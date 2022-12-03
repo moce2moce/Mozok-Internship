@@ -3,35 +3,45 @@ import { QuoteType } from "../interfaces/interfaces";
 
 const useFetch = () => {
   const [quotes, setQuotes] = useState<QuoteType[]>([]);
-  const [genders, setGenders] = useState<QuoteType[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isCompleted, setIsCompleted] = useState(false);
+  const [index, setIndex] = useState(10);
+  const initialPosts = quotes.slice(0, index);
 
   async function getData() {
     setIsLoading(true);
     const ids = await (await fetch("https://zenquotes.io/api/quotes")).json();
     const data = Promise.all(
       ids.map(
-        async (i: any, idx: any) =>
+        async (el: QuoteType) =>
           await (
-            await fetch(`https://jsonplaceholder.typicode.com/posts/${idx + 1}`)
+            await fetch(`https://api.genderize.io/?name=${el.a.split(" ")[0]}`)
           ).json()
       )
     );
-    return [setGenders(await data), setQuotes(ids)];
-  }
-
-  useEffect(() => {
-    getData().finally(() => setIsLoading(false));
-  }, []);
-
-  useEffect(() => {
+    const data2 = await data;
     setQuotes(
-      quotes.map((el, idx) => {
-        return { ...el, title: genders[idx].title };
+      ids.map((el: QuoteType, idx: number) => {
+        return { ...el, gender: data2[idx].gender };
       })
     );
-  }, [genders]);
-  return { quotes, isLoading };
+    setIsLoading(false);
+  }
+// This function is for loading 10 quotes on every click. It`s not required for this coding challenge.  
+  const loadMore = () => {
+    setIndex(index + 10);
+    if (index >= quotes.length) {
+      setIsCompleted(true);
+    } else {
+      setIsCompleted(false);
+    }
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
+
+  return { isLoading, isCompleted, loadMore, initialPosts };
 };
 
 export default useFetch;
