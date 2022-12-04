@@ -10,19 +10,19 @@ const useFetch = () => {
 
   async function getData() {
     setIsLoading(true);
-    const ids = await (await fetch("https://zenquotes.io/api/quotes")).json();
+    const quotesDataArr = await (await fetch("https://zenquotes.io/api/quotes")).json();
     const data = Promise.all(
-      ids.map(
+      quotesDataArr.map(
         async (el: QuoteType) =>
           await (
             await fetch(`https://api.genderize.io/?name=${el.a.split(" ")[0]}`)
           ).json()
       )
     );
-    const data2 = await data;
+    const genderDataArr = await data;
     setQuotes(
-      ids.map((el: QuoteType, idx: number) => {
-        return { ...el, gender: data2[idx].gender };
+      quotesDataArr.map((el: QuoteType, idx: number) => {
+        return { ...el, gender: genderDataArr[idx].gender };
       })
     );
     setIsLoading(false);
